@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qiscus SDK Simple Sample</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/qiscus-sdk.2.5.8.css">
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      html, body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #333;
+        font-family: 'Roboto', sans-serif;
+      }
+      .wrapper {
+        margin: 0 auto;
+        max-width: 1000px;
+        height: 90vh;
+        background: #455;
+        position: relative;
+      }
+      .sidebar {
+        width: 300px;
+        position: absolute;
+        background: linear-gradient(45deg, #377086, #264c5a);
+        height: 100%;
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .sidebar ul li a {
+        height: 40px;
+        display:block;
+        color: white;
+        line-height: 2.5;
+        text-decoration: none;
+        margin: 5px 10px;
+        padding: 0 10px;
+      }
+      .sidebar ul li a:hover {
+        background: linear-gradient(30deg, #d6f2ff, #fff);
+        color: #333;
+      }
+      .main {
+        position: absolute;
+        left: 300px;
+        right: 0px;
+        top: 0;
+        height: 100%;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        color: #ddd;
+        background: rgba(0,0,0,.7);
+        z-index: 100;
+        text-align: center;
+      }
+      .overlay .loading,
+      .overlay .text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .overlay .loading .fa {
+        font-size: 80pt;
+      }
+      .overlay .text {
+        top: 58%;
+      }
+
+      /* Customizing sdk css */
+      .qcw-container {
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .qcw-header {
+        border-radius: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="overlay">
+        <div class="loading"><i class="fa fa-circle-o-notch fa-spin fa-3x"></i></div>
+        <div class="text">Loading...</div>
+      </div>
+      <div class="sidebar">
+        <ul class="room-list">
+          <li><a href="javascript:void(0)" data-sdk-user="user-1@email.com">User 1</a></li>
+          <li><a href="javascript:void(0)" data-sdk-user="user-2@email.com">User 2</a></li>
+          <li><a href="javascript:void(0)" data-sdk-user="user-3@email.com">User 3</a></li>
+          <li><a href="javascript:void(0)" data-sdk-user="user-4@email.com">User 4</a></li>
+          <li><a href="javascript:void(0)" data-sdk-user="user-5@email.com">User 5</a></li>
+        </ul>
+      </div>
+      <div class="main">
+        <div id="qiscus-widget"></div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/jquery@3.2.1"></script>
+    <script src="https://unpkg.com/lodash@4.17.4"></script>
+    <script src="js/qiscus-sdk.2.5.8.js"></script>
+    <script>
+      // Here, we prepare target user by hardcode them
+      // name is used for display name for the user
+      // email is used for their "id" inside qiscus
+      // isRegistered is used for helper, so the user will be registered first
+      // ... before we can chat to them.
+      var users = [
+        { name: 'User 1', email: 'user-1@email.com', isRegistered: false },
+        { name: 'User 2', email: 'user-2@email.com', isRegistered: false },
+        { name: 'User 3', email: 'user-3@email.com', isRegistered: false },
+        { name: 'User 4', email: 'user-4@email.com', isRegistered: false },
+        { name: 'User 5', email: 'user-5@email.com', isRegistered: false }
+      ]
+      window.users = users
+      QiscusSDK.core.init({
+        AppId: 'sdksample',
+        mode: 'wide',
+        options: {
+          loginSuccessCallback: function (data) {
+            var email = data.results.user.email
+            // patch user data, so its `isRegistered` is set to true
+            var userIndex = _.findIndex(users, {email: email})
+            if (email === 'user-0@email.com') {
+              $('.overlay').css({display: 'none'});
+              return
+            }
+            // if (userIndex < 0) return
+            users[userIndex].isRegistered = true
+
+            // if all hardcoded user is registered
+            // set the "main" user, so we can start the application
+            var isAllUserRegistered = _.every(users, 'isRegistered')
+            if (isAllUserRegistered) {
+              QiscusSDK.core.setUser('user-0@email.com', 'password', 'User 0')
+            }
+          }
+        }
+      })
+      users.forEach(user => QiscusSDK.core.setUser(user.email, 'password', user.name))
+      QiscusSDK.render()
+      $('.room-list li a').on('click', function (event) {
+        event.preventDefault()
+        var target = $(this).data('sdk-user')
+        QiscusSDK.core.UI.chatTarget(target)
+      })
+    </script>
+  </body>
+</html>
