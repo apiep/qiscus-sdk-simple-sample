@@ -1,0 +1,85 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html, body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #333;
+  font-family: 'Roboto', sans-serif;
+}
+.wrapper {
+  margin: 0 auto;
+  max-width: 1000px;
+  height: 90vh;
+  position: relative;
+}
+.sidebar {
+  width: 300px;
+  position: absolute;
+  background: linear-gradient(45deg, #377086, #264c5a);
+  height: 100%;
+}
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar ul li a {
+  height: 40px;
+  display: block;
+  color: white;
+  line-height: 2.5;
+  text-decoration: none;
+  margin: 5px 10px;
+  padding: 0 10px;
+}
+.sidebar ul li a:hover {
+  background: linear-gradient(30deg, #d6f2ff, #fff);
+  color: #333;
+}
+.main {
+  position: absolute;
+  left: 300px;
+  right: 0px;
+  top: 0;
+  height: 100%;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  color: #ddd;
+  background: rgba(0,0,0,.7);
+  z-index: 100;
+  text-align: center;
+}
+.overlay .loading,
+.overlay .text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.overlay .loading .fa {
+  font-size: 80pt;
+}
+.overlay .text {
+  top: 58%;
+}
+
+
+/* Customizing sdk css */
+.qcw-container {
+  box-shadow: none;
+  border-radius: 0;
+}
+.qcw-header {
+  border-radius: 0;
+  background: linear-gradient(to right, #264c5a, #1c343e);
+}
+
