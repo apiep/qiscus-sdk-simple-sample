@@ -26,6 +26,8 @@ html, body {
   list-style: none;
   padding: 0;
   margin: 0;
+  height: 100%;
+  overflow-y: auto;
 }
 .sidebar ul li a {
   height: 40px;

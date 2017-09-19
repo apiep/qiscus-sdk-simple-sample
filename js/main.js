@@ -1,45 +1,14 @@
-// Here, we prepare target user by hardcode them
-// name is user for display name for the suer
-// email is used for their "id" inside qiscus
-// isRegistered is used for hepler, so the user will be registered first
-// ... before we can chat to them.
-var users = Array.from(new Array(5).keys())
-  .map(function (id) { return id + 1 })
-  .map(function (id) {
-    return {
-      name: 'User ' + id,
-      email: 'user-' + id + '@email.com',
-      isRegistered: false
-    }
-  })
-window.users = users
-
 function init() {
   QiscusSDK.core.init({
     AppId: 'sdksample',
     mode: 'wide',
     options: {
       loginSuccessCallback: function (data) {
-        var email = data.results.user.email
-        // patch user data, so its `isRegistered` is set to true
-        var userIndex = _.findIndex(users, {email: email})
-        if (email === 'user-0@email.com') {
-          $('.overlay').css({display: 'none'})
-          loadRoomList()
-          return
-        }
-        users[userIndex].isRegistered = true
-
-        // if all hardcoded user is registered
-        // set the "main" user, so we can start the application
-        var isAllUserRegistered = _.every(users, 'isRegistered')
-        if (isAllUserRegistered) {
-          QiscusSDK.core.setUser('user-0@email.com', 'password', 'User 0')
-        }
+        loadRoomList()
       }
     }
   })
-  users.forEach(user => QiscusSDK.core.setUser(user.email, 'password', user.name))
+  QiscusSDK.core.setUser('guest2@gg.com', 'password', 'Guest 2')
   QiscusSDK.render()
 }
 function createRoomDOM (room) {
@@ -75,11 +44,14 @@ function loadRoomList () {
       roomsDOM.forEach(function (dom) {
         $roomList.append(dom)
       })
-      console.log('roomsDOM', roomsDOM)
+      removeOverlay()
     })
     .fail(function (err) {
       console.log('failure getting rooms', err)
     })
+}
+function removeOverlay () {
+  $('.overlay').css({display: 'none'})
 }
 
 $(document).ready(function () {
