@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Video Viewer</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/video.js@6.2.7/dist/video-js.min.css">
   <script src="https://unpkg.com/jquery@3.2.1/dist/jquery.min.js"></script>
   <script src="https://unpkg.com/video.js@6.2.7/dist/video.min.js"></script>
@@ -11,19 +12,51 @@
   <script src="https://unpkg.com/videojs-contrib-hls@5.11.0/dist/videojs-contrib-hls.js"></script>
   <script src="https://unpkg.com/qs@6.5.1/dist/qs.js"></script>
   <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      text-align: center;
+      font-family: "Open sans", sans-serif;
+    }
     .videoo-js {
-      width: 800px;
-      height: 600px;
+      width: 100vw;
+      height: 100vh;
+    }
+    .flash-disabled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      z-index: 1000;
+      background: #333;
+      color: white;
+      padding: 10px 5px;
+      font-size: 1.3em;
     }
   </style>
 </head>
 
 <body>
+  <div class='flash-disabled'>
+    Please enable your Flash player on your browser
+    For Chrome browser, please disable 'Ask First' in Flash setting
+  </div>
   <video id='player' class="videoo-js">
     <source id='player-source' src='' type='rtmp/mp4'>
   </video>
 
   <script>
+    var hasFlash = false;
+    try {
+        hasFlash = Boolean(new ActiveXObject('ShockwaveFlash.ShockwaveFlash'));
+    } catch(exception) {
+        hasFlash = ('undefined' != typeof navigator.mimeTypes['application/x-shockwave-flash']);
+    }
+    if (hasFlash) {
+      $('.flash-disabled').css({display: 'none'})
+    }
     var qs = Qs.parse(window.location.search.substring(1))
     var options = { techOrder: ['html5', 'flash'] }
     $(document).ready(function () {
