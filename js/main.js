@@ -82,7 +82,7 @@ function handleRequestButtonClick (event) {
     buttons: [
       {
         label: 'Open',
-        type: 'link',
+        type: 'postback',
         payload: {
           method: '',
           url: 'qiscus://com.android.streamer/' + qiscus.selected.id
