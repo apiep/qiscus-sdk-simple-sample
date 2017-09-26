@@ -61,7 +61,7 @@ function attachBubbleClickListener () {
   console.log('attach event')
   var reRoomName = /^qiscus:\/\/com\.android\.streamer\/([a-zA-Z0-9]+)/i
   var reRTMP = /rtmp:\/\/(\S+)/
-  var viewerURL = '/viewer.html?url=rtmp://rtc.qiscus.com:2935/live360p/'
+  var viewerURL = window.location.href + '/viewer.html?url=rtmp://rtc.qiscus.com:2935/live360p/'
 
   $('body').on('click', 'a[href^=qiscus]', function (event) {
     console.group('action-buttons')
@@ -74,6 +74,7 @@ function attachBubbleClickListener () {
     if (isRTMP) {
       var rtmpURL = isRTMP[1]
       var fullURL = viewerURL + rtmpURL
+      console.log('viewer-url', fullURL)
       window.open(fullURL, 'Viewer', 'modal=1,status=0,height=600,width=800,location=0')
       console.groupEnd('action-buttons')
       return false
