@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Video Viewer</title>
+  <link rel="stylesheet" href="https://unpkg.com/video.js@6.2.7/dist/video-js.min.css">
+  <script src="https://unpkg.com/jquery@3.2.1/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/video.js@6.2.7/dist/video.min.js"></script>
+  <script src="https://unpkg.com/videojs-flash@2.0.1/dist/videojs-flash.min.js"></script>
+  <script src="https://unpkg.com/videojs-contrib-hls@5.11.0/dist/videojs-contrib-hls.js"></script>
+  <script src="https://unpkg.com/qs@6.5.1/dist/qs.js"></script>
+  <style>
+    .videoo-js {
+      width: 800px;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+  <video id='player' class="videoo-js">
+    <source id='player-source' src='' type='rtmp/mp4'>
+  </video>
+
+  <script>
+    var qs = Qs.parse(window.location.search.substring(1))
+    var options = { techOrder: ['html5', 'flash'] }
+    $(document).ready(function () {
+      var rtmpURL = qs.url
+      var playerSource = $('#player-source')
+      playerSource.attr({src: rtmpURL})
+      var player = videojs('player', options, function onReady () {
+        this.src(rtmpURL)
+        this.load()
+        this.play()
+      })
+    })
+  </script>
+</body>
+
+</html>

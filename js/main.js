@@ -5,6 +5,9 @@ function init() {
     options: {
       loginSuccessCallback: function (data) {
         loadRoomList()
+      },
+      newMessageCallback: function (data) {
+        console.log('new-message-callback', data)
       }
     }
   })
@@ -20,6 +23,7 @@ function createRoomDOM (room) {
   anchor.onclick = function (event) {
     event.preventDefault()
     QiscusSDK.core.getRoomById(room.id)
+    $('.request-btn').removeClass('hidden')
   }
   var dom = document.createElement('li')
   dom.appendChild(anchor)
@@ -53,7 +57,51 @@ function loadRoomList () {
 function removeOverlay () {
   $('.overlay').css({display: 'none'})
 }
+function attachBubbleClickListener () {
+  console.log('attach event')
+  var reRTMP = /rtmp:\/\/(\S+)/
+  var viewerURL = '/viewer.html?url='
+
+  $('body').on('click', '.qcw-comment__message', function (event) {
+    event.stopPropagation()
+    var text = $(this).find('.qcw-comment__content').text()
+    var isRTMP = text.match(reRTMP)
+    if (isRTMP) {
+      var rtmpURL = isRTMP[0]
+      var fullURL = viewerURL + rtmpURL
+      window.open(fullURL, 'Viewer', 'modal=1,status=0,height=600,width=800,location=0')
+      return false
+    }
+  })
+}
+function handleRequestButtonClick (event) {
+  event.preventDefault()
+  const uniqueId = new Date().getTime()
+  const payload = {
+    text: 'Hi, I requested a video streaming',
+    buttons: [
+      {
+        label: 'Open',
+        type: 'link',
+        payload: {
+          method: '',
+          url: 'qiscus://com.android.streamer/' + qiscus.selected.id
+        }
+      }
+    ]
+  }
+  var stringifiedPayload = JSON.stringify(payload)
+  qiscus.submitComment(
+    qiscus.selected.id,
+    'Hi aku request video streaming',
+    uniqueId,
+    'buttons',
+    stringifiedPayload
+  )
+}
 
 $(document).ready(function () {
   init()
+  attachBubbleClickListener()
+  $('body').on('click', '.request-btn', handleRequestButtonClick)
 })
