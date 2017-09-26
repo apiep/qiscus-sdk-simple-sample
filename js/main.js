@@ -97,6 +97,11 @@ function attachBubbleClickListener () {
     }
   })
 }
+// Utility function to get deep-link scheme
+function getDeeplinkScheme () {
+  var id = qiscus.selected.id
+  return 'qiscus://com.android.streamer/request?topicId=' + id + '&roomId=' + id
+}
 // This function is used to send a request stream to the other participants
 function handleRequestButtonClick (event) {
   event.preventDefault()
@@ -104,9 +109,6 @@ function handleRequestButtonClick (event) {
   // hence I just using timestamp, because it is always different, and
   // easy to get.
   var uniqueId = new Date().getTime()
-  // ... room name for the requested stream
-  // here we use "request" as room name as requested by android developer
-  var roomName = 'request'
   // here is the "payload" for posting postback comment / message
   var payload = {
     // text to appear inside the bubble
@@ -119,7 +121,7 @@ function handleRequestButtonClick (event) {
         type: 'link',
         payload: {
           // android "deep-link" scheme
-          url: 'qiscus://com.android.streamer/' + roomName
+          url: getDeeplinkScheme()
         }
       }
     ]
