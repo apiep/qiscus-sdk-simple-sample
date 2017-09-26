@@ -59,33 +59,40 @@ function removeOverlay () {
 }
 function attachBubbleClickListener () {
   console.log('attach event')
+  var reRoomName = /^qiscus:\/\/com\.android\.streamer\/([a-zA-Z0-9]+)/i
   var reRTMP = /rtmp:\/\/(\S+)/
-  var viewerURL = '/viewer.html?url='
+  var viewerURL = '/viewer.html?url=rtmp://rtc.qiscus.com:2935/live360p/'
 
-  $('body').on('click', '.qcw-comment__message', function (event) {
+  $('body').on('click', 'a[href^=qiscus]', function (event) {
+    console.group('action-buttons')
+    event.preventDefault()
     event.stopPropagation()
-    var text = $(this).find('.qcw-comment__content').text()
-    var isRTMP = text.match(reRTMP)
+    console.log('click')
+    var text = $(this).attr('href')
+    console.log('text', text)
+    var isRTMP = text.match(reRoomName)
     if (isRTMP) {
-      var rtmpURL = isRTMP[0]
+      var rtmpURL = isRTMP[1]
       var fullURL = viewerURL + rtmpURL
       window.open(fullURL, 'Viewer', 'modal=1,status=0,height=600,width=800,location=0')
+      console.groupEnd('action-buttons')
       return false
     }
+    console.groupEnd('action-buttons')
   })
 }
 function handleRequestButtonClick (event) {
   event.preventDefault()
-  const uniqueId = new Date().getTime()
-  const payload = {
+  var uniqueId = new Date().getTime()
+  var roomName = 'testing1'
+  var payload = {
     text: 'Hi, I requested a video streaming',
     buttons: [
       {
-        label: 'Open',
-        type: 'postback',
+        label: 'Open now',
+        type: 'link',
         payload: {
-          method: '',
-          url: 'qiscus://com.android.streamer/' + qiscus.selected.id
+          url: 'qiscus://com.android.streamer/' + roomName
         }
       }
     ]
