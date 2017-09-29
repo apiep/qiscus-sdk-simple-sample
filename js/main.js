@@ -1,4 +1,5 @@
-function init() {
+/* global QiscusSDK, qiscus, $ */
+function init () {
   QiscusSDK.core.init({
     AppId: 'sdksample',
     mode: 'wide',
@@ -6,7 +7,7 @@ function init() {
       loginSuccessCallback: function (data) {
         loadRoomList()
       },
-      newMessageCallback: function (data) {
+      newMessagesCallback: function (data) {
         console.log('new-message-callback', data)
       }
     }
@@ -66,9 +67,8 @@ function attachBubbleClickListener () {
   // that we want to prevent
   // url comming from android "deep-link":
   // qiscus://com.android.streamer/ROOM_NAME
-  var reRoomName = /^qiscus:\/\/com\.android\.streamer\/([a-zA-Z0-9]+)/i
-  // "mini" window video viewer url
-  var viewerURL = window.location.href + '/viewer.html?url=rtmp://rtc.qiscus.com:2935/live360p/'
+  // var reRoomName = /^qiscus:\/\/com\.android\.streamer\/([a-zA-Z0-9]+)/i
+  var reRoomName = /^qiscus:\/\/com\.android\.streamer\/(\w+)(\?(\w+)=(\S+))?/
 
   // Here we attach the click event listener to link
   // that href attribute start with `qiscus`
@@ -81,18 +81,17 @@ function attachBubbleClickListener () {
     var isRTMP = text.match(reRoomName)
     // ... if it is the url we want continue, else skip
     if (isRTMP) {
-      // ... get the room name from the url, because that what we only needed
-      var roomName = isRTMP[1]
+      // Is a request deeplink ?
+      var isRequest = isRTMP[1] === 'request'
       // ... if it was a request stream bubble prevent the user
       // and show a modal, about why it is being prevented
-      if (roomName === 'request') {
+      if (isRequest) {
         $('.modal-container').toggleClass('hidden')
         return
       }
-      // ... build the full url, and open the "mini" window,
-      // to show the video previewer
-      var fullURL = viewerURL + roomName
-      window.open(fullURL, 'Viewer', 'modal=1,status=0,height=600,width=800,location=0')
+      // ... get full url of video viewer
+      var viewerURL = isRTMP[4]
+      window.open(viewerURL, 'Viewer', 'modal=1,status=0,height=600,width=800,location=0')
       return false
     }
   })
